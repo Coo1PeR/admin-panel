@@ -1,7 +1,25 @@
 table {
   width: 100%;
+  text-align: center;
+
 }
 
 th.mat-sort-header-sorted {
   color: black;
+}
+
+.mat-header-cell {
+  text-align: center;
+}
+
+.mat-column-name {
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  padding-right: 24px;
+  text-align: left;
+
+}
+
+.mat-column-amount {
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+  text-align: center;
 }

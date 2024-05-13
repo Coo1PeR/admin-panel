@@ -20,8 +20,8 @@ const ELEMENT_DATA: PeriodicElement[] = [
   selector: 'app-users-table',
   standalone: true,
   imports: [MatTableModule, MatSortModule],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+  templateUrl: './users-table.component.html',
+  styleUrl: './users-table.component.scss'
 })
 
 

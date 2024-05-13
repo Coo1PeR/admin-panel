@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {MatTabsModule} from '@angular/material/tabs';
 import {UsersComponent} from "../users-table/users-table.component";
 

@@ -25,6 +25,11 @@ export class LoginComponent {
       this.loginForm.value.password ?? ''
     )
 
+    console.log(this.dashboardService.getAllUsers());
+    console.log(this.dashboardService.getAllCarts());
+    console.log(this.dashboardService.getAllProducts());
+
+
 
   }
 }

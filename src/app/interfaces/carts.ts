@@ -5,7 +5,7 @@ export interface ProductList {
 
 export interface Cart {
 
-  "id": string,
+  "id": number,
   "userId": number,
   "date": string,
   "products": ProductList[],

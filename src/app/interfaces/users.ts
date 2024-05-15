@@ -14,8 +14,8 @@ export interface User {
   username: string;
   password: string;
   name: {
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
   };
   phone: string;
   __v: number

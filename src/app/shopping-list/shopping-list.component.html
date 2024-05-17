@@ -14,7 +14,7 @@
 
   <!-- Количество товара -->
   <ng-container matColumnDef="quantity">
-    <mat-header-cell *matHeaderCellDef> Количество </mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Количество </mat-header-cell>
     <mat-cell *matCellDef="let row">
 <!--      <button mat-icon-button (click)="decreaseQuantity(row)">-->
 <!--        <mat-icon>remove</mat-icon>-->
@@ -27,12 +27,15 @@
   </ng-container>
 
   <!-- Общая сумма -->
-  <ng-container matColumnDef="total">
-    <mat-header-cell *matHeaderCellDef> Общая сумма </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{ row.total | currency }} </mat-cell>
+  <ng-container matColumnDef="sum">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Общая сумма </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{ row.sum | currency }} </mat-cell>
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 
 </mat-table>
+
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+

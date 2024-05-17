@@ -6,11 +6,13 @@ import {MatTableModule} from "@angular/material/table";
 import {MatSort, MatSortModule} from "@angular/material/sort";
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {UserFull} from "../interfaces/userFull";
+import {MatCardModule} from '@angular/material/card';
+
 
 @Component({
   selector: 'app-user-cart',
   standalone: true,
-  imports: [ShoppingListComponent, RouterModule,MatTableModule, MatSortModule],
+  imports: [ShoppingListComponent, RouterModule,MatTableModule, MatSortModule, MatCardModule],
   templateUrl: './user-cart.component.html',
   styleUrl: './user-cart.component.scss'
 })

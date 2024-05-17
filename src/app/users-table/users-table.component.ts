@@ -9,6 +9,7 @@ import {User} from '../interfaces/users';
 import {MatDialog} from "@angular/material/dialog";
 import {UserCartComponent} from "../user-cart/user-cart.component";
 import {UserFull} from "../interfaces/userFull";
+import {MatProgressBar, MatProgressBarModule} from "@angular/material/progress-bar";
 
 
 let userData: any[];
@@ -16,7 +17,7 @@ let userData: any[];
 @Component({
   selector: 'app-users-table',
   standalone: true,
-  imports: [MatTableModule, MatSortModule, CommonModule, RouterModule],
+  imports: [MatTableModule, MatSortModule, CommonModule, RouterModule, MatProgressBarModule],
   templateUrl: './users-table.component.html',
   styleUrl: './users-table.component.scss'
 })
@@ -24,6 +25,7 @@ let userData: any[];
 export class UsersComponent implements AfterViewInit {
 
   usersFromTable: any;
+  isLoading = true;
 
   displayedColumns: string[] = ['userFullName', 'phone', 'totalPurchase'];
   dataSource = new MatTableDataSource<any>();
@@ -42,7 +44,8 @@ export class UsersComponent implements AfterViewInit {
     userData = this.dashboardService.getUserDataWithTotalPurchase();
     this.dataSource.data = userData;
     this.dataSource.sort = this.sort;
-    this.usersFromTable = userData
+    this.usersFromTable = userData;
+    this.isLoading = false;
   }
 
   openUserDetailsDialog(user: UserFull) {

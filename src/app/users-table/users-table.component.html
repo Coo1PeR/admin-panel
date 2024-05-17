@@ -1,4 +1,5 @@
-<table mat-table [dataSource]="dataSource" matSort>
+
+<table mat-table [dataSource]="dataSource" matSort> <!--*ngIf="!isLoading"-->
 
   <!-- Фамилия и Имя -->
   <ng-container matColumnDef="userFullName">
@@ -21,3 +22,6 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let user; columns: displayedColumns;" (click)="openUserDetailsDialog(user)"></tr>
 </table>
+
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+

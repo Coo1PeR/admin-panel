@@ -16,7 +16,7 @@
   <!-- Сумма покупок -->
   <ng-container matColumnDef="totalPurchase">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Сумма покупок</th>
-    <td mat-cell *matCellDef="let user">{{user.totalPurchase}}</td>
+    <td mat-cell *matCellDef="let user">{{user.totalPurchase | currency}}</td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

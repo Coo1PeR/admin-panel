@@ -98,4 +98,31 @@ export class DashboardService {
       });
     });
   }
+
+  async updatePurchase(userId: number, purchase: Purchases) {
+    // Найдите соответствующую корзину для обновления
+    const userCart = this.carts.find(cart => cart.userId === userId &&
+      cart.products.some(p => p.productId === this.products.find(prod => prod.title === purchase.title)?.id));
+
+    if (userCart) {
+      const productId = this.products.find(p => p.title === purchase.title)?.id;
+      if (productId) {
+        const productInCart = userCart.products.find(p => p.productId === productId);
+        if (productInCart) {
+          productInCart.quantity = purchase.quantity;
+        } else {
+          userCart.products.push({ productId, quantity: purchase.quantity });
+        }
+      }
+
+      // // Обновите корзину на сервере
+      // await fetch(`${this.url}/carts/${userCart.id}`, {
+      //   method: 'PUT',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify(userCart)
+      // });
+    }
+  }
 }

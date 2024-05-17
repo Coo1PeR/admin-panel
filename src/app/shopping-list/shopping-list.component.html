@@ -16,13 +16,13 @@
   <ng-container matColumnDef="quantity">
     <mat-header-cell *matHeaderCellDef mat-sort-header> Количество </mat-header-cell>
     <mat-cell *matCellDef="let row">
-<!--      <button mat-icon-button (click)="decreaseQuantity(row)">-->
-<!--        <mat-icon>remove</mat-icon>-->
-<!--      </button>-->
+      <button mat-icon-button (click)="decreaseQuantity(row)">
+        <mat-icon>remove</mat-icon>
+      </button>
       {{ row.quantity }}
-<!--      <button mat-icon-button (click)="increaseQuantity(row)">-->
-<!--        <mat-icon>add</mat-icon>-->
-<!--      </button>-->
+      <button mat-icon-button (click)="increaseQuantity(row)">
+        <mat-icon>add</mat-icon>
+      </button>
     </mat-cell>
   </ng-container>
 

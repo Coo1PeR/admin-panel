@@ -44,4 +44,18 @@ export class ShoppingListComponent  implements OnInit{
       this.isLoading = false;
     }
   }
+
+  increaseQuantity(purchase: Purchases) {
+    purchase.quantity++;
+    purchase.sum = purchase.quantity * purchase.price;
+    this.dashboardService.updatePurchase(this.data.id, purchase);
+  }
+
+  decreaseQuantity(purchase: Purchases) {
+    if (purchase.quantity > 0) {
+      purchase.quantity--;
+      purchase.sum = purchase.quantity * purchase.price;
+      this.dashboardService.updatePurchase(this.data.id, purchase);
+    }
+  }
 }

@@ -13,6 +13,7 @@ export class DashboardService {
   users: User[] = [];
   carts: Cart[] = [];
   products: Product[] = [];
+  userFull: UserFull[] = [];
 
   constructor() {}
 
@@ -43,7 +44,7 @@ export class DashboardService {
   }
 
   getUserDataWithTotalPurchase(): UserFull[] {
-    return this.users.map((user) => {
+    this.userFull = this.users.map((user) => {
       const userCarts = this.carts.filter((cart) => cart.userId === user.id);
       let totalPurchase: number = 0;
       let userFullName: string = `${user.name.lastname.charAt(0).toUpperCase()}${user.name.lastname.slice(1)} ${user.name.firstname.charAt(0).toUpperCase()}${user.name.firstname.slice(1)}`;
@@ -62,10 +63,37 @@ export class DashboardService {
       totalPurchase = +totalPurchase.toFixed(2);
       return { ...user, totalPurchase, userFullName };
     });
+    return this.userFull;
   }
 
-  loginApplication(login: string, password: string) {
+  async loginApplication(login: string, password: string) {
     console.log(login, password);
+    await this.initializeData();
+    console.log(this.users);
+  }
+
+  addUser(lastName: string, firstName: string, email: string, phone: string) {
+    const newUser: User = {
+      id: this.users.length
+        ? Math.max(...this.users.map((user) => user.id)) + 1
+        : 1,
+      name: { lastname: lastName, firstname: firstName },
+      email: email,
+      phone: phone,
+      username: `${firstName}${lastName.split('').shift()}`,
+      password: '',
+      __v: 0,
+      address: {
+        geolocation: { lat: +'', long: +'' },
+        city: '',
+        street: '',
+        number: 0,
+        zipcode: '',
+      },
+    };
+    this.users.push(newUser);
+    console.log(`New user added:`, newUser);
+    this.getUserDataWithTotalPurchase();
   }
 
   getProductById(productId: number): Product | undefined {
@@ -74,71 +102,72 @@ export class DashboardService {
 
   async getPurchases(userId: number): Promise<Purchases[]> {
     return new Promise(async (resolve) => {
-      await this.initializeAndFetchData(() => {
-        const userCarts = this.carts.filter((cart) => cart.userId === userId);
-        const purchaseMap: { [productId: number]: Purchases } = {};
+      const userCarts = this.carts.filter((cart) => cart.userId === userId);
+      const purchaseMap: { [productId: number]: Purchases } = {};
 
-        userCarts.forEach((cart) => {
-          cart.products.forEach((product) => {
-            const productData = this.products.find(
-              (p) => p.id === product.productId,
-            );
-            if (productData) {
-              if (!purchaseMap[product.productId]) {
-                purchaseMap[product.productId] = {
-                  title: productData.title,
-                  price: productData.price,
-                  quantity: 0,
-                  sum: 0,
-                };
-              }
-              purchaseMap[product.productId].quantity += product.quantity;
-              purchaseMap[product.productId].sum =
-                purchaseMap[product.productId].quantity * productData.price;
+      userCarts.forEach((cart) => {
+        cart.products.forEach((product) => {
+          const productData = this.products.find(
+            (p) => p.id === product.productId,
+          );
+          if (productData) {
+            if (!purchaseMap[product.productId]) {
+              purchaseMap[product.productId] = {
+                title: productData.title,
+                price: productData.price,
+                quantity: 0,
+                sum: 0,
+              };
             }
-          });
+            purchaseMap[product.productId].quantity += product.quantity;
+            purchaseMap[product.productId].sum =
+              purchaseMap[product.productId].quantity * productData.price;
+          }
         });
-
-        resolve(Object.values(purchaseMap));
       });
+
+      resolve(Object.values(purchaseMap));
     });
   }
 
   async updatePurchase(userId: number, purchase: Purchases) {
-    // Найдите соответствующую корзину для обновления
-    const userCart = this.carts.find(
-      (cart) =>
-        cart.userId === userId &&
-        cart.products.some(
-          (p) =>
-            p.productId ===
-            this.products.find((prod) => prod.title === purchase.title)?.id,
-        ),
-    );
+    // Найти все корзины пользователя
+    const userCarts = this.carts.filter((cart) => cart.userId === userId);
 
-    if (userCart) {
-      const productId = this.products.find(
-        (p) => p.title === purchase.title,
-      )?.id;
-      if (productId) {
-        const productInCart = userCart.products.find(
+    // Найти id товара по названию
+    const productId = this.products.find((p) => p.title === purchase.title)?.id;
+
+    if (productId) {
+      let remainingQuantity = purchase.quantity;
+
+      for (let cart of userCarts) {
+        const productInCart = cart.products.find(
           (p) => p.productId === productId,
         );
-        if (productInCart) {
-          productInCart.quantity = purchase.quantity;
-        } else {
-          userCart.products.push({ productId, quantity: purchase.quantity });
-        }
-      }
 
-      // // Обновите корзину на сервере
-      // await fetch(`${this.url}/carts/${userCart.id}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(userCart)
-      // });
+        if (productInCart) {
+          // Обновить количество товара в корзине
+          if (remainingQuantity > 0) {
+            productInCart.quantity = remainingQuantity;
+            remainingQuantity = 0;
+          } else {
+            productInCart.quantity = 0; // Или удалить товар из корзины, если количество = 0
+          }
+        } else if (remainingQuantity > 0) {
+          // Если товара нет в корзине, добавьте его
+          cart.products.push({ productId, quantity: remainingQuantity });
+          remainingQuantity = 0;
+        }
+
+        // Обновите корзину на сервере (если это необходимо)
+        // Здесь можно сделать PUT запросы для обновления каждой корзины на сервере
+        // Пример:
+        // await fetch(`${this.url}/carts/${cart.id}`, {
+        //     method: 'PUT',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(cart),
+        // });
+      }
     }
   }
 }

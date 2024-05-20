@@ -8,7 +8,7 @@ export interface UserFull {
     street: string;
     number: number;
     zipcode: string;
-  }
+  };
   id: number;
   email: string;
   username: string;
@@ -20,6 +20,5 @@ export interface UserFull {
   phone: string;
   __v: number;
   totalPurchase: number;
-  userFullName: string
+  userFullName: string;
 }
-

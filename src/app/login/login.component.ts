@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import {
@@ -27,8 +27,8 @@ export class LoginComponent {
 
   @Input() startPage!: StartPageComponent;
 
-  loginApplication() {
-    this.dashboardService.loginApplication(
+  async loginApplication() {
+    await this.dashboardService.loginApplication(
       this.loginForm.value.login ?? '',
       this.loginForm.value.password ?? '',
     );

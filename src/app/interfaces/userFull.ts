@@ -21,4 +21,5 @@ export interface UserFull {
   __v: number;
   totalPurchase: number;
   userFullName: string;
+  profileImage?: string;
 }

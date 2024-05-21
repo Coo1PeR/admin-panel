@@ -4,8 +4,6 @@ import { LoginComponent } from './login/login.component';
 import { StartPageComponent } from './start-page/start-page.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { UserCartComponent } from './user-cart/user-cart.component';
-import { NgxsModule } from '@ngxs/store';
-import { DashboardService } from './dashboard.service';
 
 @Component({
   selector: 'app-root',
@@ -20,4 +18,6 @@ import { DashboardService } from './dashboard.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'admin-panel';
+}

@@ -29,12 +29,11 @@ let userData: any[];
   templateUrl: './users-table.component.html',
   styleUrl: './users-table.component.scss',
 })
-export class UsersComponent implements OnInit {
-  usersFromTable: any;
+export class UsersComponent implements OnInit, AfterViewInit {
   isLoading = true;
 
   displayedColumns: string[] = ['userFullName', 'phone', 'totalPurchase'];
-  dataSource = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource<UserFull>();
 
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -45,13 +44,22 @@ export class UsersComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    userData = this.dashboardService.getUserDataWithTotalPurchase();
-    this.dataSource.data = userData;
-    this.dataSource.sort = this.sort;
-    this.usersFromTable = userData;
-    this.isLoading = false;
+    this.loadData();
+    this.dashboardService.getUsersChangedObservable().subscribe(() => {
+      this.loadData();
+    });
 
     console.log(this.dashboardService.users);
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
+
+  loadData() {
+    userData = this.dashboardService.getUserDataWithTotalPurchase();
+    this.dataSource.data = userData;
+    this.isLoading = false;
   }
 
   openUserDetailsDialog(user: UserFull) {

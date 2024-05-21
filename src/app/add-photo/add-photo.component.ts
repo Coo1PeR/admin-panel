@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { DashboardService } from '../dashboard.service';
-import { DialogRef, DialogModule } from '@angular/cdk/dialog';
+import { DialogRef, DialogModule, Dialog } from '@angular/cdk/dialog';
 import { NgIf } from '@angular/common';
 
 @Component({
@@ -18,6 +18,7 @@ export class AddPhotoComponent {
   constructor(
     private dashboardService: DashboardService,
     public dialogRef: DialogRef<AddPhotoComponent>,
+    public dialog: Dialog,
   ) {}
 
   ngOnInit() {
@@ -55,18 +56,26 @@ export class AddPhotoComponent {
     const reader = new FileReader();
     reader.onload = () => {
       this.imageUrl = reader.result;
-      // Save the image to the server or to the user profile
-      // this.dashboardService.saveUserProfileImage(file);
+
+      // Save the image as a base64 string to the user profile
       if (typeof this.imageUrl === 'string') {
-        this.dashboardService.users[
-          this.dashboardService.users.length - 1
-        ].address.zipcode = this.imageUrl;
+        this.saveUserProfileImage(this.imageUrl);
       }
     };
     reader.readAsDataURL(file);
   }
 
+  saveUserProfileImage(base64Image: string) {
+    // Implement saving logic here
+    // Example: Saving to the last user added in the users array
+    const lastUserIndex = this.dashboardService.userFull.length - 1;
+    if (lastUserIndex >= 0) {
+      this.dashboardService.userFull[lastUserIndex].profileImage = base64Image;
+    }
+  }
+
   complete() {
-    this.dialogRef.close();
+    console.log(this.dashboardService.userFull);
+    this.dialog.closeAll();
   }
 }

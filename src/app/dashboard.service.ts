@@ -4,6 +4,11 @@ import { Product } from './interfaces/products';
 import { Cart } from './interfaces/carts';
 import { UserFull } from './interfaces/userFull';
 import { Purchases } from './interfaces/purchases';
+import { Store } from '@ngxs/store';
+import { LoadUsers } from './ngxs/actions/user.actions';
+import { LoadProducts } from './ngxs/actions/product.actions';
+import { LoadCarts } from './ngxs/actions/cart.actions';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +20,28 @@ export class DashboardService {
   products: Product[] = [];
   userFull: UserFull[] = [];
 
+  private usersChanged = new Subject<void>();
+
+  //constructor(private store: Store) {}
   constructor() {}
+
+  getUsersChangedObservable() {
+    return this.usersChanged.asObservable();
+  }
+
+  notifyUsersChanged() {
+    this.usersChanged.next();
+  }
 
   async initializeData() {
     this.users = await this.getAllUsers();
     this.carts = await this.getAllCarts();
     this.products = await this.getAllProducts();
+
+    // // Диспатчим действия для обновления хранилища NGXS
+    // this.store.dispatch(new LoadUsers(this.users));
+    // this.store.dispatch(new LoadCarts(this.carts));
+    // this.store.dispatch(new LoadProducts(this.products));
   }
 
   async initializeAndFetchData(action: () => void) {
@@ -94,6 +115,7 @@ export class DashboardService {
     this.users.push(newUser);
     console.log(`New user added:`, newUser);
     this.getUserDataWithTotalPurchase();
+    this.notifyUsersChanged(); // Уведомляем об изменении списка пользователей
   }
 
   getProductById(productId: number): Product | undefined {

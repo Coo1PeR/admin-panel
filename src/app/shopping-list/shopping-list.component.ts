@@ -33,12 +33,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatProgressBarModule,
   ],
   templateUrl: './shopping-list.component.html',
-  styleUrl: './shopping-list.component.scss',
+  styleUrls: ['./shopping-list.component.scss'],
 })
 export class ShoppingListComponent implements OnInit, AfterViewInit {
   purchases: Purchases[] = [];
   displayedColumns: string[] = ['title', 'price', 'quantity', 'sum'];
-  dataSource = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource<Purchases>();
   isLoading = true;
 
   @ViewChild(MatSort) sort!: MatSort;

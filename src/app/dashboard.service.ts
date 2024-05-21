@@ -21,6 +21,7 @@ export class DashboardService {
   userFull: UserFull[] = [];
 
   private usersChanged = new Subject<void>();
+  private purchasesChanged = new Subject<void>();
 
   //constructor(private store: Store) {}
   constructor() {}
@@ -31,6 +32,14 @@ export class DashboardService {
 
   notifyUsersChanged() {
     this.usersChanged.next();
+  }
+
+  getPurchasesChangedObservable() {
+    return this.purchasesChanged.asObservable();
+  }
+
+  notifyPurchasesChanged() {
+    this.purchasesChanged.next();
   }
 
   async initializeData() {
@@ -123,35 +132,25 @@ export class DashboardService {
   }
 
   async getPurchases(userId: number): Promise<Purchases[]> {
-    return new Promise(async (resolve) => {
-      const userCarts = this.carts.filter((cart) => cart.userId === userId);
-      const purchaseMap: { [productId: number]: Purchases } = {};
-
-      userCarts.forEach((cart) => {
-        cart.products.forEach((product) => {
-          const productData = this.products.find(
-            (p) => p.id === product.productId,
-          );
-          if (productData) {
-            if (!purchaseMap[product.productId]) {
-              purchaseMap[product.productId] = {
-                title: productData.title,
-                price: productData.price,
-                quantity: 0,
-                sum: 0,
-              };
-            }
-            purchaseMap[product.productId].quantity += product.quantity;
-            purchaseMap[product.productId].sum =
-              purchaseMap[product.productId].quantity * productData.price;
-          }
-        });
-      });
-
-      resolve(Object.values(purchaseMap));
-    });
+    // Имитируем получение данных о покупках
+    const userCarts = this.carts.filter((cart) => cart.userId === userId);
+    const purchases: Purchases[] = [];
+    for (const cart of userCarts) {
+      for (const product of cart.products) {
+        const productData = this.products.find(
+          (p) => p.id === product.productId,
+        );
+        if (productData) {
+          purchases.push({
+            ...productData,
+            quantity: product.quantity,
+            sum: product.quantity * productData.price,
+          });
+        }
+      }
+    }
+    return purchases;
   }
-
   async updatePurchase(userId: number, purchase: Purchases) {
     // Найти все корзины пользователя
     const userCarts = this.carts.filter((cart) => cart.userId === userId);
@@ -191,5 +190,6 @@ export class DashboardService {
         // });
       }
     }
+    this.notifyPurchasesChanged(); // Уведомляем об изменении покупок
   }
 }

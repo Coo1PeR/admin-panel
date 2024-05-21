@@ -9,12 +9,7 @@ import { User } from '../interfaces/users';
 import { MatDialog } from '@angular/material/dialog';
 import { UserCartComponent } from '../user-cart/user-cart.component';
 import { UserFull } from '../interfaces/userFull';
-import {
-  MatProgressBar,
-  MatProgressBarModule,
-} from '@angular/material/progress-bar';
-
-let userData: any[];
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-users-table',
@@ -27,11 +22,10 @@ let userData: any[];
     MatProgressBarModule,
   ],
   templateUrl: './users-table.component.html',
-  styleUrl: './users-table.component.scss',
+  styleUrls: ['./users-table.component.scss'],
 })
 export class UsersComponent implements OnInit, AfterViewInit {
   isLoading = true;
-
   displayedColumns: string[] = ['userFullName', 'phone', 'totalPurchase'];
   dataSource = new MatTableDataSource<UserFull>();
 
@@ -48,8 +42,9 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.dashboardService.getUsersChangedObservable().subscribe(() => {
       this.loadData();
     });
-
-    console.log(this.dashboardService.users);
+    this.dashboardService.getPurchasesChangedObservable().subscribe(() => {
+      this.loadData();
+    });
   }
 
   ngAfterViewInit() {
@@ -57,7 +52,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   loadData() {
-    userData = this.dashboardService.getUserDataWithTotalPurchase();
+    const userData = this.dashboardService.getUserDataWithTotalPurchase();
     this.dataSource.data = userData;
     this.isLoading = false;
   }
